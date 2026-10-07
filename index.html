@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>IAPP 2026 · Vic's Booth Run</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1a0533; --paper:#faf5ff; --paper2:#ede9fe; --card:#f5f3ff; --line:#c4b5fd;
+    --A:#7c3aed; --A-soft:#ede9fe; --gold:#7e22ce; --gold-soft:#f3e8ff;
+    --muted:#7c6f9e; --done:#a78bfa; --bzone:#ede9fe;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;line-height:1.4;overscroll-behavior:none}
+  .app{max-width:560px;margin:0 auto;min-height:100%;
+    background-color:#faf5ff;
+    background-image:
+      radial-gradient(18px 12px at 20px 22px,rgba(139,92,246,.08) 100%,transparent 100%),
+      radial-gradient(18px 12px at 60px 22px,rgba(139,92,246,.08) 100%,transparent 100%),
+      radial-gradient(11px 14px at 23px 38px,rgba(167,139,250,.05) 100%,transparent 100%),
+      radial-gradient(11px 14px at 57px 38px,rgba(167,139,250,.05) 100%,transparent 100%);
+    background-size:80px 60px;
+  }
+
+  /* ── butterfly / glitter animations ── */
+  @keyframes shimmer{0%{background-position:200% center}100%{background-position:-200% center}}
+  @keyframes hdrshine{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  @keyframes flutter{0%,100%{transform:scale(1) rotate(-3deg)}30%{transform:scale(1.1) rotate(3deg)}70%{transform:scale(.93) rotate(-1deg)}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+
+  .top{position:sticky;top:0;z-index:30;color:#fff;padding:13px 16px 11px;box-shadow:0 2px 14px rgba(100,0,200,.22);
+    background:linear-gradient(120deg,#4c1d95,#7c3aed,#a855f7,#9333ea,#4c1d95);
+    background-size:300% 100%;
+    animation:hdrshine 6s ease infinite;
+  }
+  .row1{display:flex;align-items:center;gap:13px}
+  .titles .t{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:23px;line-height:1}
+  .titles .s{font-family:'IBM Plex Mono',monospace;font-size:11px;opacity:.92;margin-top:3px}
+  .titles .s b{color:var(--gold-soft)}
+  .reset{margin-left:auto;align-self:flex-start;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#fff;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.5);border-radius:20px;padding:5px 11px;cursor:pointer}
+  .next{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);border-radius:11px;padding:8px 12px;margin-top:10px;cursor:pointer}
+  .next .lab{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+  .ninfo{flex:1;min-width:0;cursor:pointer}
+  .nmain{display:flex;gap:9px;align-items:baseline;margin-top:1px}
+  .next .bo{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:15px}
+  .next .co{font-weight:700;font-size:17px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .nsub{font-family:'IBM Plex Mono',monospace;font-size:11px;opacity:.9;margin-top:3px}
+  .ndone{flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+    min-width:74px;min-height:52px;background:#fff;color:var(--A);border:none;border-radius:12px;cursor:pointer;
+    font-family:'IBM Plex Sans',sans-serif;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+  .ndone:active{transform:translateY(1px);box-shadow:0 1px 0 rgba(0,0,0,.12)}
+  .ndone .chk{font-size:20px;line-height:1}
+  .ndone .t{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.05em}
+
+  .vswitch{position:sticky;top:0;z-index:20;display:flex;background:var(--paper);border-bottom:1px solid var(--line)}
+  .vswitch button{flex:1;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;letter-spacing:.06em;border:none;background:none;color:var(--muted);padding:13px 6px;cursor:pointer;border-bottom:3px solid transparent}
+  .vswitch button.on{color:var(--ink);border-bottom-color:var(--A)}
+
+  .filters{display:flex;gap:7px;padding:11px 14px 4px}
+  .chip{flex:1;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;border:2px solid var(--ink);background:var(--card);color:var(--ink);border-radius:30px;padding:8px 6px;cursor:pointer}
+  .chip.on{background:var(--ink);color:#fff}
+  .chip.on.gold{background:var(--gold);border-color:var(--gold)}
+
+  .searchwrap{position:relative;padding:11px 14px 0}
+  .search{width:100%;font-family:'IBM Plex Sans',sans-serif;font-size:15px;padding:11px 40px 11px 38px;border:2px solid var(--ink);border-radius:30px;background:#fff;color:var(--ink);-webkit-appearance:none}
+  .search:focus{outline:none;border-color:var(--A)}
+  .search::-webkit-search-cancel-button{display:none}
+  .searchwrap .mag{position:absolute;left:26px;top:50%;transform:translateY(-30%);color:var(--muted);font-size:15px;pointer-events:none}
+  .clearx{position:absolute;right:24px;top:50%;transform:translateY(-30%);border:none;background:none;color:var(--muted);font-size:20px;cursor:pointer;display:none;line-height:1}
+  .clearx.show{display:block}
+  .result{margin:10px 14px 0;border-radius:12px;padding:11px 14px;font-size:14px;line-height:1.45;display:none}
+  .result.show{display:block}
+  .result.yes{background:var(--A-soft);border:2px solid var(--A)}
+  .result.no{background:#fff;border:2px dashed var(--muted);color:var(--muted)}
+  .result b{font-family:'IBM Plex Mono',monospace}
+  .view{display:none}.view.on{display:block}
+  .sync{margin:10px 14px 0;border:2px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+  .sync summary{cursor:pointer;list-style:none;padding:11px 14px;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:var(--ink);display:flex;justify-content:space-between;align-items:center}
+  .sync summary::-webkit-details-marker{display:none}
+  .sync summary .pill{font-family:'IBM Plex Sans',sans-serif;font-weight:600;font-size:10px;background:var(--A);color:#fff;border-radius:20px;padding:2px 8px;margin-left:auto;margin-right:8px}
+  .sync summary::after{content:"＋";color:var(--muted)} .sync[open] summary::after{content:"−"}
+  .sync .body{padding:0 14px 14px;font-size:12.5px;color:var(--muted);line-height:1.5}
+  .sync .body b{color:var(--ink)}
+  .sync .rowb{display:flex;gap:8px;margin-top:9px}
+  .sync input{flex:1;font-family:'IBM Plex Mono',monospace;font-size:13px;padding:9px 11px;border:1.5px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);min-width:0}
+  .sync button{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;border:2px solid var(--ink);background:var(--ink);color:#fff;border-radius:9px;padding:8px 13px;cursor:pointer;white-space:nowrap}
+  .sync button.alt{background:#fff;color:var(--ink)}
+
+  .list{padding:6px 0 40px}
+  .grp{padding:13px 16px 4px;display:flex;align-items:baseline;gap:8px}
+  .grp .ai{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .grp .ar{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink);opacity:.45}
+  .grp .gp{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted)}
+  .grp .rule{height:1px;background:var(--line);flex:1;margin-left:4px;align-self:center}
+  .stop{display:flex;align-items:center;gap:13px;padding:12px 16px;margin:0 10px 7px;border-radius:12px;background:var(--card);border:1.5px solid var(--line);cursor:pointer;min-height:54px;transition:transform .06s,background .15s,border-color .15s}
+  .stop:active{transform:scale(.985)}
+  .stop.asset{border-color:var(--gold);
+    background:linear-gradient(90deg,#f3e8ff 0%,#faf5ff 25%,#ede9fe 50%,#f5f3ff 75%,#f3e8ff 100%);
+    background-size:300% auto;
+    animation:shimmer 2.8s linear infinite;
+  }
+  .bo:empty{display:none;min-width:0}
+  .box{width:27px;height:27px;border:2.4px solid var(--ink);border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;background:#fff}
+  .stop.done .box{background:var(--A);border-color:var(--A)}
+  .stop.asset.done .box{background:var(--gold);border-color:var(--gold)}
+  .bo{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:15px;min-width:42px;flex-shrink:0}
+  .meta{flex:1;min-width:0}
+  .co{font-size:16px;font-weight:500;line-height:1.2}
+  .stop.asset .co{font-weight:600}
+  .hh{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px}
+  .stop.done .co,.stop.done .bo{text-decoration:line-through;color:var(--done)}
+  .stop.done{background:transparent;border-color:transparent;min-height:0;padding:5px 16px;opacity:.5;margin-bottom:2px}
+  .stop.done .box{width:17px;height:17px;font-size:11px;border-width:2px}
+  .stop.done .bo{font-size:12px}
+  .stop.done .co{font-size:12.5px}
+  .stop.done .astar{display:none}
+  .stop.done .hh{display:none}
+  .stop.asset.done{background:transparent;border-color:transparent}
+  .astar{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;color:#fff;background:var(--gold);padding:3px 8px;border-radius:20px;flex-shrink:0;animation:flutter 2s ease-in-out infinite}
+  .stop.done .astar{opacity:.4}
+  .flash{animation:fl 1.1s ease}@keyframes fl{0%,100%{box-shadow:0 0 0 0 rgba(224,96,31,0)}30%{box-shadow:0 0 0 4px rgba(224,96,31,.45)}}
+  .empty-msg{text-align:center;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:40px 20px}
+
+  .maphint{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);text-align:center;padding:10px 16px 2px}
+  .mapwrap{padding:4px 10px}
+  svg.floor{width:100%;height:auto;display:block;background:#fff5f9;border:1.5px solid var(--line);border-radius:12px;touch-action:manipulation}
+  .lm{fill:#dfe7e8;stroke:#c9cfcf;stroke-width:.4}
+  .lm-lab{font-family:'IBM Plex Sans',sans-serif;fill:#6f7a7a;font-weight:600;text-anchor:middle}
+  .bzone-rect{fill:var(--bzone);stroke:#c9d8d6;stroke-width:.4;stroke-dasharray:1.5 1.5}
+  .bzone-lab{font-family:'IBM Plex Mono',monospace;fill:#9aaeac;text-anchor:middle}
+  .routeline{fill:none;stroke:var(--A);stroke-width:.5;stroke-dasharray:1.4 1.4;opacity:.4}
+  .dot{cursor:pointer}
+  .dot.hidden{display:none}
+  .dot circle.hit{fill:transparent}
+  .dot circle.dt{stroke-width:.4}
+  .dot.next circle.ring{fill:none;stroke:var(--A);stroke-width:1;opacity:.95;animation:pulse 1.3s ease-out infinite}
+  .dot circle.dt{stroke-width:.4}
+  @keyframes pulse{0%{r:3.5;opacity:.95}100%{r:9;opacity:0}}
+  #allclear{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;fill:var(--A);text-anchor:middle;opacity:0}
+  #allclear.show{opacity:1}
+  .legend{display:flex;flex-wrap:wrap;gap:11px 16px;justify-content:center;padding:12px 16px 6px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .lg{width:14px;height:14px;border-radius:50%;display:inline-block}
+  .lg.todo{background:#fff;border:2px solid var(--ink)}
+  .lg.asg{background:#fff;border:2.4px solid var(--gold)}
+  .legnote{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);padding:0 16px 30px}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--ink);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:13px;padding:9px 16px;border-radius:24px;opacity:0;transition:.2s;pointer-events:none;z-index:50;max-width:90%}
+  .toast.show{opacity:1}
+  .foot{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);padding:8px 20px 24px;line-height:1.7}
+  /* ══════════════════════════════════════════════
+     SEATTLE TWILIGHT · IAPP '26
+     dark forest · misty emerald · PNW dusk
+     ══════════════════════════════════════════════ */
+
+  @keyframes pnw-shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  @keyframes emerald-pulse{0%,100%{box-shadow:0 0 6px rgba(61,158,106,.35),0 0 12px rgba(61,158,106,.15)}50%{box-shadow:0 0 14px rgba(61,158,106,.65),0 0 28px rgba(61,158,106,.3)}}
+  @keyframes forest-shimmer{0%{background-position:200% center}100%{background-position:-200% center}}
+
+  :root{
+    --ink:#d0e8da;
+    --paper:#0a1610;
+    --paper2:#111f16;
+    --card:#142018;
+    --line:#1e3828;
+    --A:#3d9e6a;
+    --A-soft:#0a1a10;
+    --gold:#2d7a52;
+    --gold-soft:#081410;
+    --muted:#4a7a5a;
+    --done:#111f16;
+    --bzone:#111f16;
+  }
+  html,body{background:#0a1610}
+  .app{
+    background-color:#0a1610;
+    background-image:repeating-linear-gradient(-78deg,transparent 0,transparent 9px,rgba(61,158,106,.055) 9px,rgba(61,158,106,.055) 10px);
+    background-size:14px 14px;
+  }
+  .top{
+    background:linear-gradient(120deg,#051008,#0f2e18,#1a5530,#2d8a50,#1a5530,#0f2e18,#051008)!important;
+    background-size:300% 100%!important;
+    animation:pnw-shimmer 7s ease infinite!important;
+    border-bottom:1px solid rgba(61,158,106,.25);
+    box-shadow:0 0 24px rgba(30,90,50,.4)!important;
+  }
+  .next{background:#0e1c12!important;border-bottom:1px solid #1e3828!important;box-shadow:0 4px 20px rgba(45,122,82,.1)}
+  .ninfo .co{color:#d0e8da}
+  .ninfo .sub{color:#4a7a5a}
+  .next .bo{color:#3d9e6a!important}
+  .list-wrap{background:#0a1610}
+  .grp{background:#0a1610;border-top:1px solid #162414}
+  .grp .ai{color:#3d9e6a!important;letter-spacing:.16em}
+  .grp .rule{background:#1e3828}
+  .grp .gp{color:#4a7a5a}
+  .stop{background:#111f16!important;border-color:#1e3828!important;color:#d0e8da}
+  .stop:active{background:#182a1e!important}
+  .stop .co{color:#c4e0cc}
+  .stop .hh{color:#4a7a5a}
+  .stop .bo{color:#2a6040!important;font-size:12px}
+  .stop.done{background:#0a1410!important;border-color:transparent!important;opacity:.4}
+  .stop.done .co{color:#2a4030}
+  .stop.asset{
+    background:linear-gradient(90deg,#0a1610 0%,#111f16 25%,#152518 50%,#111f16 75%,#0a1610 100%)!important;
+    background-size:300% auto!important;
+    animation:forest-shimmer 3s linear infinite!important;
+    border-color:#2d7a52!important;
+    box-shadow:0 0 10px rgba(45,122,82,.2),inset 0 0 8px rgba(45,122,82,.05)!important;
+  }
+  .stop.asset .co{color:#d0e8da;font-weight:600}
+  .stop.asset.done{background:#0a1410!important;border-color:transparent!important;box-shadow:none!important}
+  .box{background:#0e1c12!important;border-color:#1e3828!important}
+  .stop.done .box{background:#162414!important;border-color:#162414!important}
+  .stop.asset.done .box{background:#1a5530!important;border-color:#1a5530!important}
+  .astar{
+    background:linear-gradient(135deg,#2d7a52,#52b788)!important;
+    color:#fff!important;
+    box-shadow:0 0 8px rgba(61,158,106,.5),0 0 16px rgba(45,122,82,.2)!important;
+    animation:emerald-pulse 2s ease-in-out infinite!important;
+    letter-spacing:.04em
+  }
+  .srch{background:#0e1c12;border-bottom:1px solid #162414}
+  #search{background:#111f16!important;border-color:#1e3828!important;color:#d0e8da!important}
+  #search::placeholder{color:#2a4030!important}
+  #search:focus{border-color:#3d9e6a!important;box-shadow:0 0 0 3px rgba(61,158,106,.15)!important}
+  .result.yes{background:#0a1a0a;border-color:#3d9e6a;color:#6acc90}
+  .result.no{background:#1a1008;border-color:#8a7020;color:#c8a840}
+  .chip{background:#0e1c12!important;border-color:#1e3828!important;color:#4a7a5a!important}
+  .chip.on{background:#0f2e18!important;border-color:#3d9e6a!important;color:#c4e0cc!important;box-shadow:0 0 8px rgba(61,158,106,.25)!important}
+  .chip.on.gold{background:#081808!important;border-color:#2d7a52!important;color:#80c8a0!important;box-shadow:0 0 8px rgba(45,122,82,.3)!important}
+  .tabs{background:#0e1c12;border-bottom:1px solid #162414}
+  .tab{background:#0e1c12!important;border-color:#162414!important;color:#2a4030!important}
+  .tab.on{background:#0f2e18!important;border-color:#3d9e6a!important;color:#c4e0cc!important}
+  .sync{background:#111f16!important;border-color:#1e3828!important}
+  .sync summary{color:#4a7a5a}
+  .sync input{background:#0a1410!important;border-color:#162414!important;color:#d0e8da!important}
+  .sync button{background:#2d7a52!important;border-color:#2d7a52!important;color:#fff!important}
+  .sync button.alt{background:#111f16!important;border-color:#2d7a52!important;color:#3d9e6a!important}
+  .sync .body{color:#4a7a5a}
+  .sync .body b{color:#d0e8da}
+  .toast{background:rgba(10,22,16,.95);border:1px solid #3d9e6a;color:#d0e8da;box-shadow:0 0 20px rgba(61,158,106,.3)}
+  .foot{background:#0a1610;border-top:1px solid #162414;color:#2a4030}
+  /* ── end seattle twilight ── */
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="top">
+    <div class="row1">
+      <svg width="52" height="52" viewBox="0 0 54 54">
+        <circle cx="27" cy="27" r="22" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="6"/>
+        <circle id="ringfill" cx="27" cy="27" r="22" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-dasharray="138.2" stroke-dashoffset="138.2" transform="rotate(-90 27 27)"/>
+        <text id="ringpct" x="27" y="31" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="600" fill="#fff">0%</text>
+      </svg>
+      <div class="titles">
+        <div class="t">☁️ IAPP '26</div>
+        <div class="s"><span id="vcount">0 / —</span> visited · <b><span id="acount">0 / —</span> ★ cards</b></div>
+      </div>
+      <button class="reset" id="reset">reset</button>
+    </div>
+    <div class="next" id="next">
+      <div class="ninfo" id="ninfo">
+        <div class="lab">Up next</div>
+        <div class="nmain"><span class="bo" id="nbo"></span><span class="co" id="nco"></span></div>
+        <div class="nsub" id="nsub"></div>
+      </div>
+      <button class="ndone" id="ndone"><span class="chk">✓</span><span class="t">Done</span></button>
+    </div>
+  </div>
+
+  <div class="vswitch">
+    <button data-view="list" class="on">≡ List</button>
+    <button data-view="map">⊚ Map</button>
+  </div>
+
+  <div class="view list-view on">
+    <div class="searchwrap">
+      <span class="mag">⌕</span>
+      <input id="search" class="search" type="search" inputmode="search" autocomplete="off" autocapitalize="off" placeholder="Search company or booth #…">
+      <button id="clearx" class="clearx" aria-label="clear">×</button>
+    </div>
+    <div class="result" id="result"></div>
+    <details class="sync" id="sync">
+      <summary>⤓ Save / restore progress <span class="pill">backup</span></summary>
+      <div class="body">
+        In-app auto-save can be wiped when you fully close the app. To be safe: tap <b>Copy</b> before closing, keep the code in Notes, then <b>Restore</b> when you reopen.
+        <div class="rowb"><input id="codeout" readonly aria-label="your progress code"><button id="copycode">Copy</button></div>
+        <div class="rowb"><input id="codein" placeholder="paste a saved code…" autocapitalize="off" autocomplete="off"><button id="restorecode" class="alt">Restore</button></div>
+      </div>
+    </details>
+    <div class="filters">
+      <button class="chip on" data-f="all">All</button>
+      <button class="chip" data-f="todo">To-do</button>
+      <button class="chip gold" data-f="asset">★ Assets</button>
+    </div>
+    <div class="list" id="list"></div>
+    <div class="foot">★ = have cards to hand out · tap a stop to check it off · progress saves automatically</div>
+  </div>
+
+  <div class="view map-view">
+    <div class="maphint">Only your remaining stops show here — checked-off booths drop off the map. Tap a dot to clear it.</div>
+    <div class="mapwrap"><svg class="floor" id="floor" viewBox="0 0 100 122" preserveAspectRatio="xMidYMid meet"></svg></div>
+    <div class="legend">
+      <span><span class="lg todo"></span> still to go</span>
+      <span><span class="lg asg"></span> ★ asset (still owe)</span>
+      <span><span class="lg" style="background:none;border:2px dashed var(--A)"></span> up next</span>
+    </div>
+    <div class="legnote">dashed line = the path still ahead, in walking order</div>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY='boothrun_iapp_2026_v1';
+/* ===== DREAMFORCE '26 · Moscone Center · All exhibitors from Vic's planning sheet ===== */
+/* ★ = Card? field is "Yes" or "Have one" in the source CSV */
+/* No map — use Dreamforce app for floor navigation */
+/* Grouped by Dreamforce sponsor tier */
+const RAW=[
+  {co:"Securiti",b:1001,displayB:"",asset:1,group:1000,groupLabel:"IAPP '26"},
+  {co:"OneTrust",b:1002,displayB:"",asset:1,group:1000,groupLabel:"IAPP '26"},
+  {co:"BigID",b:1003,displayB:"",asset:1,group:1000,groupLabel:"IAPP '26"},
+  {co:"Privado.ai",b:1004,displayB:"",asset:1,group:1000,groupLabel:"IAPP '26"},
+  {co:"Thomson Reuters",b:1005,displayB:"",asset:1,group:1000,groupLabel:"IAPP '26"},
+  {co:"Cyera",b:1006,displayB:"",asset:1,group:1000,groupLabel:"IAPP '26"},
+  {co:"TrustArc",b:1007,displayB:"",asset:1,group:1000,groupLabel:"IAPP '26"},
+  {co:"Clarip",b:1008,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Google",b:1009,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"MineOS",b:1010,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Relyance AI",b:1011,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Ketch",b:1012,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Osano",b:1013,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"RadarFirst",b:1014,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"BotCity",b:1015,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Dechert",b:1016,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Trustible",b:1017,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"aosphere",b:1018,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"BlackCloak",b:1019,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Cranium",b:1020,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Credo.AI",b:1021,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"DataGrail",b:1022,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Feroot Security",b:1023,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"filerskeepers",b:1024,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Jscrambler",b:1025,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"ObservePoint",b:1026,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Shoosmiths",b:1027,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Singulr AI",b:1028,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Transcend",b:1029,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Truyo",b:1030,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Captain Compliance",b:1031,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Cloaked",b:1032,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Enzai Technologies",b:1033,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Future of Privacy Forum (FPF)",b:1034,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"HoundDog.ai",b:1035,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"LightBeam.ai",b:1036,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Lua Legal",b:1037,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Reflectiz",b:1038,displayB:"",group:1000,groupLabel:"IAPP '26"},
+  {co:"Seedless",b:1039,displayB:"",group:1000,groupLabel:"IAPP '26"}
+];
+/* custom group key */
+const aisleOf=x=>x.group!==undefined?x.group:Math.floor(x.b/100)*100;
+const aisles=[...new Set(RAW.map(x=>aisleOf(x)))].sort((p,q)=>p-q);
+let STOPS=[];
+aisles.forEach((ai,i)=>RAW.filter(x=>aisleOf(x)===ai).sort((p,q)=>p.b-q.b).forEach(x=>STOPS.push({...x,ai,dir:''})));
+const TOTAL=STOPS.length, ASSETS=STOPS.filter(x=>x.asset).length;
+const HAS_MAP=false; /* no booth coordinates — use Dreamforce app map */
+const RB=[];
+/* ===== END DATA BLOCK ===== */
+
+let done=new Set(), filter='all', view='list', mapBuilt=false, search='';
+const matches=(s,q)=>s.co.toLowerCase().includes(q)||String(s.b).includes(q);
+const list=document.getElementById('list'), floor=document.getElementById('floor'), toast=document.getElementById('toast');
+
+async function load(){try{const v=localStorage.getItem(KEY);if(v)done=new Set(JSON.parse(v));}catch(e){}}
+async function save(){try{await window.storage.set(KEY,JSON.stringify([...done]));}catch(e){}}
+function toggle(b){ done.has(b)?done.delete(b):done.add(b); save(); refresh(); }
+function showToast(t){toast.textContent=t;toast.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>toast.classList.remove('show'),1600);}
+
+/* compact progress code: 1 bit per stop, packed to hex (sandbox-independent backup) */
+function encodeState(){let h='';for(let i=0;i<STOPS.length;i+=4){let n=0;for(let j=0;j<4;j++)if(done.has((STOPS[i+j]||{}).b))n|=(1<<j);h+=n.toString(16);}return h;}
+function decodeState(str){const hex=(str||'').trim().toLowerCase().replace(/[^0-9a-f]/g,'');const ns=new Set();for(let i=0;i<hex.length;i++){const n=parseInt(hex[i],16);if(isNaN(n))continue;for(let j=0;j<4;j++){const idx=i*4+j;if(idx<STOPS.length&&(n&(1<<j)))ns.add(STOPS[idx].b);}}return ns;}
+function syncCodeBox(){const co=document.getElementById('codeout');if(co)co.value=encodeState();}
+
+function renderList(){
+  list.innerHTML='';let shown=0,curAi=null;
+  const inc=x=> search ? matches(x,search) : !((filter==='todo'&&done.has(x.b))||(filter==='asset'&&!x.asset));
+  STOPS.forEach(x=>{
+    const isDone=done.has(x.b);
+    if(!inc(x))return;
+    if(x.ai!==curAi){curAi=x.ai;
+      const inA=STOPS.filter(s=>s.ai===x.ai&&inc(s));
+      const dn=inA.filter(s=>done.has(s.b)).length;
+      const g=document.createElement('div');g.className='grp';
+      const aiLabel=x.groupLabel||(x.ai>=9000?'Booth TBD':`Aisle ${x.ai}`);
+      g.innerHTML=`<span class="ai">${aiLabel}</span><span class="ar">${x.dir}</span><span class="rule"></span><span class="gp">${dn}/${inA.length}</span>`;
+      list.appendChild(g);}
+    const dB=x.displayB||x.b;
+    const d=document.createElement('div');d.className='stop'+(x.asset?' asset':'')+(isDone?' done':'');d.dataset.b=x.b;
+    d.innerHTML=`<div class="box">${isDone?'✓':''}</div><span class="bo">${dB}</span><div class="meta"><div class="co">${x.co}</div>${x.host?`<div class="hh">${x.host}</div>`:''}</div>${x.asset?'<span class="astar">✨ CARD</span>':''}`;
+    d.addEventListener('click',()=>toggle(x.b));list.appendChild(d);shown++;
+  });
+  if(!shown&&!search){const m=document.createElement('div');m.className='empty-msg';m.textContent=filter==='todo'?'All stops cleared. Nice work.':'Nothing here.';list.appendChild(m);}
+  updateResult();
+}
+
+function updateResult(){
+  const r=document.getElementById('result'), q=search;
+  document.getElementById('clearx').classList.toggle('show',!!q);
+  if(!q){r.className='result';r.innerHTML='';return;}
+  const aM=STOPS.filter(s=>matches(s,q));
+  if(aM.length){
+    const dn=aM.filter(s=>done.has(s.b)).length;
+    const tail=aM.length<=4?': '+aM.map(s=>`${s.co} <b>${s.displayB||s.b}</b>`).join(', '):'';
+    r.className='result show yes';
+    r.innerHTML=`✓ <b>Found</b> — ${aM.length} match${aM.length>1?'es':''}${tail}${dn?` · ${dn} already checked off`:''}`;
+  }else{
+    r.className='result show no';
+    r.innerHTML=`No match for "<b>${q.replace(/</g,'')}</b>" in this floor plan.`;
+  }
+}
+
+const NS='http://www.w3.org/2000/svg';
+function el(n,a){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;}
+const LANDMARKS=[
+  /* Hall layout — Walter E. Washington Convention Center, Hall D */
+  /* Entrance on RIGHT (x≈95). Back of hall on LEFT (x≈30). */
+  {x:3,y:27,w:26,h:39,l:"Keynote / Digital Infra Theater"},
+  {x:50,y:3,w:17,h:12,l:"Seminar A"},
+  {x:68,y:3,w:15,h:13,l:"Enterprise Arch Theater"},
+  {x:84,y:3,w:11,h:9,l:"Speakers Lounge"},
+  {x:84,y:13,w:11,h:7,l:"VIP Lounge",s:1},
+  {x:44,y:54,w:17,h:9,l:"Food Court"},
+  {x:62,y:54,w:9,h:9,l:"Recharge Zone",s:1},
+  {x:71,y:54,w:12,h:9,l:"Sponsor Net."},
+  {x:84,y:54,w:11,h:9,l:"APP Net. Zone"},
+  {x:32,y:65,w:14,h:27,l:"Startup Zone"},
+  {x:47,y:65,w:18,h:14,l:"Fraud & Finance Thtr"},
+  {x:66,y:65,w:20,h:14,l:"Physical Identity Thtr"},
+  {x:44,y:46,w:16,h:7,l:"Seminar B"}
+];
+let routeLine, allclear, nextLabel;
+function buildMap(){
+  if(mapBuilt)return;
+  /* entrance label */
+  const ent=el('text',{x:97,y:50,'font-size':2.4,'text-anchor':'end',fill:'#9aaeac','font-family':'IBM Plex Mono,monospace','font-weight':'600'});ent.textContent="← ENTRANCE";floor.appendChild(ent);
+  LANDMARKS.forEach(m=>{
+    floor.appendChild(el('rect',{x:m.x,y:m.y,width:m.w,height:m.h,rx:1.2,class:'lm'}));
+    const t=el('text',{x:m.x+m.w/2,y:m.y+m.h/2+0.9,'font-size':m.s?1.9:2.3,class:'lm-lab'});t.textContent=m.l;floor.appendChild(t);
+  });
+  routeLine=el('polyline',{points:'',class:'routeline'});floor.appendChild(routeLine);
+  STOPS.filter(s=>s.x!=null).forEach(s=>{
+    const g=el('g',{class:'dot'});g.dataset.b=s.b;
+    g.appendChild(el('circle',{class:'ring',cx:s.x,cy:s.y,r:3.5}));
+    g.appendChild(el('circle',{class:'dt',cx:s.x,cy:s.y,r:2.8}));
+    g.appendChild(el('circle',{class:'hit',cx:s.x,cy:s.y,r:5}));
+    g.addEventListener('click',()=>{const wasDone=done.has(s.b);toggle(s.b);if(!wasDone)showToast(`✓ been there — ${s.displayB||s.b} · ${s.co}`);});
+    floor.appendChild(g);
+  });
+  allclear=el('text',{id:'allclear',x:50,y:50,'font-size':5});allclear.textContent=`All ${TOTAL} cleared 🎉`;floor.appendChild(allclear);
+  nextLabel=el('text',{x:0,y:0,'font-size':3.1,'font-weight':700,'text-anchor':'middle',fill:'#16181d',style:'paint-order:stroke;stroke:#fff;stroke-width:1.1px'});nextLabel.setAttribute('opacity','0');floor.appendChild(nextLabel);
+  mapBuilt=true;
+}
+function paintMap(){
+  if(!mapBuilt)return;
+  const remaining=STOPS.filter(x=>!done.has(x.b)&&x.x!=null);
+  const next=remaining[0];
+  routeLine.setAttribute('points', remaining.map(s=>`${s.x},${s.y}`).join(' '));
+  floor.querySelectorAll('.dot').forEach(g=>{
+    const b=+g.dataset.b, s=STOPS.find(x=>x.b===b), isDone=done.has(b), c=g.querySelector('.dt');
+    const isNext=!!next && next.b===b;
+    g.classList.toggle('hidden', isDone);
+    g.classList.toggle('next', isNext);
+    const col = s.asset ? '#b5006a' : '#e0186e';   // solid: magenta = card booth, hot pink = normal
+    c.setAttribute('fill', col); c.setAttribute('stroke', col);
+    c.setAttribute('r', isNext ? 4 : 2.8);
+  });
+  if(next){ nextLabel.setAttribute('opacity','1'); nextLabel.setAttribute('x',next.x); nextLabel.setAttribute('y',next.y-5.5); nextLabel.textContent=next.displayB||next.b; }
+  else { nextLabel.setAttribute('opacity','0'); }
+  if(allclear) allclear.classList.toggle('show', remaining.length===0);
+}
+
+function updateStats(){
+  const v=done.size, a=STOPS.filter(x=>x.asset&&done.has(x.b)).length;
+  document.getElementById('vcount').textContent=`${v} / ${TOTAL}`;
+  document.getElementById('acount').textContent=`${a} / ${ASSETS}`;
+  document.getElementById('ringfill').setAttribute('stroke-dashoffset',(2*Math.PI*22)*(1-v/TOTAL));
+  document.getElementById('ringpct').textContent=Math.round(v/TOTAL*100)+'%';
+  const nx=STOPS.find(x=>!done.has(x.b)),ne=document.getElementById('next'),dn=document.getElementById('ndone');
+  if(nx){
+    document.getElementById('nbo').textContent=nx.displayB||nx.b;
+    document.getElementById('nco').textContent=nx.co;
+    const nxLabel=nx.groupLabel||(nx.ai>=9000?'Booth TBD':`Aisle ${nx.ai}`);
+    document.getElementById('nsub').textContent=`${nxLabel} · ${nx.dir}`+(nx.asset?'  ·  ★ hand cards':'')+(nx.host?`  ·  ${nx.host}`:'');
+    ne.dataset.b=nx.b; dn.style.display='';
+  }else{
+    document.getElementById('nbo').textContent='';
+    document.getElementById('nco').textContent=`All done — ${TOTAL}/${TOTAL} 🎉`;
+    document.getElementById('nsub').textContent='';
+    ne.dataset.b=''; dn.style.display='none';
+  }
+}
+function refresh(){ renderList(); paintMap(); updateStats(); syncCodeBox(); }
+
+document.getElementById('ninfo').addEventListener('click',function(){
+  const b=document.getElementById('next').dataset.b;if(!b)return;
+  if(view==='map'){const g=floor.querySelector(`.dot[data-b="${b}"]`);if(g){const sf=STOPS.find(s=>s.b==b);showToast(`Next: ${sf.displayB||sf.b} · ${sf.co}`);}return;}
+  if(filter!=='all'||search){filter='all';search='';document.getElementById('search').value='';document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.f==='all'));renderList();}
+  const e=list.querySelector(`.stop[data-b="${b}"]`);if(e){e.scrollIntoView({behavior:'smooth',block:'center'});e.classList.add('flash');setTimeout(()=>e.classList.remove('flash'),1100);}
+});
+document.getElementById('ndone').addEventListener('click',function(ev){
+  ev.stopPropagation();
+  const b=+document.getElementById('next').dataset.b;if(!b)return;
+  const justDone=STOPS.find(s=>s.b===b);
+  done.add(b);save();refresh();
+  const nx=STOPS.find(x=>!done.has(x.b));
+  showToast(`✓ ${justDone.displayB||justDone.b} ${justDone.co} done`+(nx?`  →  next: ${nx.displayB||nx.b} ${nx.co}`:'  ·  route complete!'));
+});
+document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{filter=c.dataset.f;if(search){search='';document.getElementById('search').value='';}document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));renderList();}));
+document.querySelectorAll('.vswitch button').forEach(b=>b.addEventListener('click',()=>{
+  view=b.dataset.view;document.querySelectorAll('.vswitch button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelector('.list-view').classList.toggle('on',view==='list');
+  document.querySelector('.map-view').classList.toggle('on',view==='map');
+  if(view==='map'){buildMap();paintMap();}
+}));
+document.getElementById('reset').addEventListener('click',()=>{if(done.size===0||confirm('Clear all checked stops?')){done.clear();save();refresh();}});
+
+(async()=>{await load();
+  if(!HAS_MAP){
+    const sw=document.querySelector('.vswitch'); if(sw) sw.style.display='none';
+    const mv=document.querySelector('.map-view'); if(mv) mv.remove();
+    view='list'; document.querySelector('.list-view').classList.add('on');
+  }
+  renderList();updateStats();
+})();
+
+/* search */
+const searchEl=document.getElementById('search');
+searchEl.addEventListener('input',()=>{search=searchEl.value.trim().toLowerCase();renderList();});
+
+/* save / restore progress code */
+const codeOut=document.getElementById('codeout'), codeIn=document.getElementById('codein');
+syncCodeBox();
+document.getElementById('copycode').addEventListener('click',()=>{
+  const c=encodeState();codeOut.value=c;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(c).then(()=>showToast('Code copied — paste it into Notes to save'),()=>{codeOut.select();showToast('Tap & hold the code to copy');});
+  } else { codeOut.select();showToast('Tap & hold the code to copy'); }
+});
+document.getElementById('restorecode').addEventListener('click',()=>{
+  if(!codeIn.value.trim()){showToast('Paste a saved code first');return;}
+  done=decodeState(codeIn.value);save();refresh();codeIn.value='';
+  showToast('Restored — '+done.size+' stops checked off');
+});
+document.getElementById('clearx').addEventListener('click',()=>{searchEl.value='';search='';searchEl.focus();renderList();});
+</script>
+</body>
+</html>
